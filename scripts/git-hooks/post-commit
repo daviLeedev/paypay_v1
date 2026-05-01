@@ -1,0 +1,4 @@
+#!/bin/sh
+if [ "$PAYPAY_AUTO_PUSH" = "1" ]; then
+  git push
+fi

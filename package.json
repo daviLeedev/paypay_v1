@@ -7,7 +7,9 @@
     "dev:mobile": "pnpm --filter mobile-web dev",
     "dev:admin": "pnpm --filter admin-console dev",
     "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "version:history": "node scripts/update-version-history.mjs",
+    "hooks:install": "node scripts/install-git-hooks.mjs"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

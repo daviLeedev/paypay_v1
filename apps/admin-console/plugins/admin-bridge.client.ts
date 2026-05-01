@@ -1,4 +1,5 @@
 import { createBridgeChannel } from "@repo/bridge";
+import type { MobileLogEntry, MobileStateSnapshot } from "@repo/types";
 
 export default defineNuxtPlugin(() => {
   const bridge = createBridgeChannel({ source: "admin-console" });
@@ -16,11 +17,11 @@ export default defineNuxtPlugin(() => {
     }
 
     if (message.kind === "log") {
-      logs.value = [message.payload, ...logs.value].slice(0, 80);
+      logs.value = [message.payload as MobileLogEntry, ...logs.value].slice(0, 80);
     }
 
     if (message.kind === "state") {
-      snapshot.value = message.payload;
+      snapshot.value = message.payload as MobileStateSnapshot;
     }
   });
 

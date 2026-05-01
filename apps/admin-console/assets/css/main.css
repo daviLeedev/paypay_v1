@@ -10,7 +10,8 @@ body {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -122,6 +123,18 @@ h2 {
   gap: 8px;
 }
 
+.segmented-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.segmented-row button.active {
+  border-color: transparent;
+  background: #16665d;
+  color: #ffffff;
+}
+
 .switch-row,
 .field-row {
   display: flex;
@@ -136,6 +149,15 @@ h2 {
   border: 1px solid #cdd5df;
   border-radius: 8px;
   padding: 8px;
+}
+
+.field-row--stacked {
+  display: grid;
+  align-items: start;
+}
+
+.field-row--stacked input {
+  width: 100%;
 }
 
 .data-grid {

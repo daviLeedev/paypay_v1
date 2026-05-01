@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { DEFAULT_FEATURE_FLAGS } from "@repo/config";
-import type { AdminCommand } from "@repo/types";
+import { DEFAULT_FEATURE_FLAGS, DEFAULT_MOBILE_HOME_CONFIG } from "@repo/config";
+import type { AdminCommand, MobileBannerItem, MobileLayoutMode } from "@repo/types";
 
 const config = useRuntimeConfig();
 const iframeRef = ref<HTMLIFrameElement | null>(null);
@@ -10,6 +10,11 @@ const { connected, logs, events, snapshot } = useMobileLabState();
 const localFlags = reactive({ ...DEFAULT_FEATURE_FLAGS });
 const latencyMs = ref(0);
 const forceError = ref(false);
+const localLayoutMode = ref<MobileLayoutMode>(DEFAULT_MOBILE_HOME_CONFIG.layoutMode);
+const bannerTitle = ref(DEFAULT_MOBILE_HOME_CONFIG.banners[0]?.title ?? "");
+const bannerDescription = ref(DEFAULT_MOBILE_HOME_CONFIG.banners[0]?.description ?? "");
+const bannerImageUrl = ref(DEFAULT_MOBILE_HOME_CONFIG.banners[0]?.imageUrl ?? "");
+const includeSecondBanner = ref(true);
 
 const mobileUrl = computed(() => {
   const url = new URL(String(config.public.mobileWebUrl));
@@ -43,6 +48,48 @@ const applyMockBehavior = () => {
     }
   });
 };
+
+const applyLayoutMode = (layoutMode: MobileLayoutMode) => {
+  localLayoutMode.value = layoutMode;
+  postCommand({ type: "ui:set-layout-mode", payload: { layoutMode } });
+};
+
+const buildBannerPayload = (): MobileBannerItem[] => {
+  const primaryBanner: MobileBannerItem = {
+    ...(DEFAULT_MOBILE_HOME_CONFIG.banners[0] ?? {
+      id: "lab-main",
+      title: "Mobile Lab banner",
+      imageUrl: "/images/banners/daily-blooms.svg"
+    }),
+    id: "lab-main",
+    title: bannerTitle.value || "Mobile Lab banner",
+    description: bannerDescription.value,
+    imageUrl: bannerImageUrl.value || "/images/banners/daily-blooms.svg",
+    tone: "primary"
+  };
+
+  return includeSecondBanner.value ? [primaryBanner, DEFAULT_MOBILE_HOME_CONFIG.banners[1]].filter(Boolean) : [primaryBanner];
+};
+
+const applyBanners = () => {
+  postCommand({ type: "ui:set-banners", payload: { banners: buildBannerPayload() } });
+};
+
+const setActiveBanner = (index: number) => {
+  postCommand({ type: "ui:set-active-banner", payload: { index } });
+};
+
+watch(
+  snapshot,
+  (nextSnapshot) => {
+    if (!nextSnapshot?.ui) {
+      return;
+    }
+
+    localLayoutMode.value = nextSnapshot.ui.homeConfig.layoutMode;
+  },
+  { deep: true }
+);
 </script>
 
 <template>
@@ -65,8 +112,37 @@ const applyMockBehavior = () => {
           <h2>Controls</h2>
           <div class="button-row">
             <button type="button" @click="navigateMobile('/')">Home</button>
-            <button type="button" @click="navigateMobile('/receipt')">Receipt</button>
+            <button type="button" @click="navigateMobile('/products/rose-bouquet')">Detail</button>
             <button type="button" @click="requestState">Refresh</button>
+          </div>
+        </section>
+
+        <section>
+          <h2>UI Strategy</h2>
+          <div class="segmented-row">
+            <button type="button" :class="{ active: localLayoutMode === 'single' }" @click="applyLayoutMode('single')">1 column</button>
+            <button type="button" :class="{ active: localLayoutMode === 'double' }" @click="applyLayoutMode('double')">2 columns</button>
+          </div>
+          <label class="field-row field-row--stacked">
+            <span>Banner title</span>
+            <input v-model="bannerTitle" type="text" />
+          </label>
+          <label class="field-row field-row--stacked">
+            <span>Banner description</span>
+            <input v-model="bannerDescription" type="text" />
+          </label>
+          <label class="field-row field-row--stacked">
+            <span>Banner image URL</span>
+            <input v-model="bannerImageUrl" type="text" />
+          </label>
+          <label class="switch-row">
+            <span>Use second slide</span>
+            <input v-model="includeSecondBanner" type="checkbox" />
+          </label>
+          <div class="button-row">
+            <button type="button" @click="applyBanners">Apply banner</button>
+            <button type="button" @click="setActiveBanner(0)">Slide 1</button>
+            <button type="button" @click="setActiveBanner(1)">Slide 2</button>
           </div>
         </section>
 

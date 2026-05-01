@@ -1,17 +1,25 @@
-import { fileURLToPath } from "node:url";
+const filePath = (path: string) => new URL(path, import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-03-01",
-  devtools: { enabled: true },
+  devtools: { enabled: false },
+  modules: ["@pinia/nuxt"],
   typescript: {
     strict: true
   },
   alias: {
-    "@repo/bridge": fileURLToPath(new URL("../../packages/bridge/src/index.ts", import.meta.url)),
-    "@repo/config": fileURLToPath(new URL("../../packages/config/src/index.ts", import.meta.url)),
-    "@repo/logger": fileURLToPath(new URL("../../packages/logger/src/index.ts", import.meta.url)),
-    "@repo/state-adapter": fileURLToPath(new URL("../../packages/state-adapter/src/index.ts", import.meta.url)),
-    "@repo/types": fileURLToPath(new URL("../../packages/types/src/index.ts", import.meta.url))
+    "@repo/bridge": filePath("../../packages/bridge/src/index.ts"),
+    "@repo/config": filePath("../../packages/config/src/index.ts"),
+    "@repo/logger": filePath("../../packages/logger/src/index.ts"),
+    "@repo/state-adapter": filePath("../../packages/state-adapter/src/index.ts"),
+    "@repo/types": filePath("../../packages/types/src/index.ts")
   },
-  css: ["~/assets/css/main.css"]
+  css: ["~/assets/css/main.css"],
+  vite: {
+    server: {
+      hmr: {
+        overlay: false
+      }
+    }
+  }
 });

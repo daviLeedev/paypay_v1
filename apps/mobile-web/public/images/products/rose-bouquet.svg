@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-label="Rose bouquet">
+  <rect width="420" height="320" rx="28" fill="#fde8ee"/>
+  <path d="M210 270 C184 212 176 160 188 98" fill="none" stroke="#4d7a57" stroke-width="12" stroke-linecap="round"/>
+  <path d="M164 270 C172 210 156 156 116 108" fill="none" stroke="#4d7a57" stroke-width="10" stroke-linecap="round"/>
+  <path d="M256 270 C244 210 260 152 310 106" fill="none" stroke="#4d7a57" stroke-width="10" stroke-linecap="round"/>
+  <g fill="#f07f9f">
+    <circle cx="188" cy="84" r="28"/><circle cx="162" cy="106" r="25"/><circle cx="210" cy="114" r="27"/><circle cx="190" cy="106" r="18" fill="#fac0cf"/>
+  </g>
+  <g fill="#e75480">
+    <circle cx="114" cy="100" r="25"/><circle cx="92" cy="122" r="22"/><circle cx="136" cy="130" r="24"/><circle cx="116" cy="120" r="15" fill="#f6a8bc"/>
+  </g>
+  <g fill="#f39ab4">
+    <circle cx="310" cy="94" r="27"/><circle cx="286" cy="118" r="23"/><circle cx="334" cy="124" r="24"/><circle cx="312" cy="116" r="16" fill="#fac6d3"/>
+  </g>
+  <path d="M136 248 H282 L260 300 H158 Z" fill="#ffffff"/>
+  <path d="M154 262 H264" stroke="#e7a8b8" stroke-width="8" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-label="Orchid pot detail">
+  <rect width="420" height="320" rx="28" fill="#f6f9ff"/>
+  <g fill="#ffffff" stroke="#d889c8" stroke-width="6">
+    <ellipse cx="166" cy="100" rx="54" ry="32" transform="rotate(-28 166 100)"/><ellipse cx="222" cy="108" rx="58" ry="34" transform="rotate(24 222 108)"/>
+    <ellipse cx="194" cy="156" rx="52" ry="30" transform="rotate(4 194 156)"/><circle cx="196" cy="124" r="18" fill="#f6d365" stroke="none"/>
+  </g>
+  <path d="M150 224 H270 L252 296 H168 Z" fill="#ffffff"/>
+</svg>

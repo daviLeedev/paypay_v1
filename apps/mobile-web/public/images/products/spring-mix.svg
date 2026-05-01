@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-label="Spring mix flowers">
+  <rect width="420" height="320" rx="28" fill="#eef8ee"/>
+  <path d="M130 258 C142 198 134 142 98 94" fill="none" stroke="#4f8159" stroke-width="9" stroke-linecap="round"/>
+  <path d="M188 258 C180 190 194 128 244 76" fill="none" stroke="#4f8159" stroke-width="9" stroke-linecap="round"/>
+  <path d="M248 258 C246 194 268 148 326 104" fill="none" stroke="#4f8159" stroke-width="9" stroke-linecap="round"/>
+  <path d="M298 258 C284 202 286 152 312 112" fill="none" stroke="#4f8159" stroke-width="8" stroke-linecap="round"/>
+  <g fill="#f6d365"><circle cx="96" cy="86" r="20"/><circle cx="76" cy="106" r="18"/><circle cx="118" cy="110" r="18"/><circle cx="98" cy="104" r="12" fill="#fff2a6"/></g>
+  <g fill="#f08aa7"><circle cx="246" cy="70" r="22"/><circle cx="224" cy="92" r="18"/><circle cx="268" cy="96" r="19"/><circle cx="246" cy="90" r="12" fill="#fac3cf"/></g>
+  <g fill="#b57edc"><circle cx="328" cy="104" r="20"/><circle cx="308" cy="124" r="17"/><circle cx="348" cy="128" r="17"/><circle cx="328" cy="122" r="11" fill="#e7c7f3"/></g>
+  <ellipse cx="164" cy="172" rx="50" ry="16" fill="#8fbe93" transform="rotate(28 164 172)"/>
+  <ellipse cx="260" cy="174" rx="54" ry="16" fill="#8fbe93" transform="rotate(-26 260 174)"/>
+  <path d="M118 238 H302 L274 302 H146 Z" fill="#ffffff"/>
+  <path d="M142 254 H278" stroke="#cbe5cd" stroke-width="8" stroke-linecap="round"/>
+</svg>

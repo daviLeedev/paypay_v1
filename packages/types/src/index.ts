@@ -19,10 +19,63 @@ export type MobileRouteState = {
   query: Record<string, string>;
 };
 
+export type MobileLayoutMode = "single" | "double";
+
+export type MobileBannerTone = "default" | "primary" | "dark";
+
+export type MobileBannerItem = {
+  id: string;
+  title: string;
+  description?: string;
+  imageUrl: string;
+  linkTo?: string;
+  tone?: MobileBannerTone;
+};
+
+export type MobileQuickActionItem = {
+  id: string;
+  label: string;
+  description?: string;
+  linkTo: string;
+};
+
+export type MobileProductItem = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  price?: string;
+  originalPrice?: string;
+  discountRate?: string;
+  rating?: number;
+  reviewCount?: number;
+  imageUrl?: string;
+  images?: string[];
+  badge?: string;
+  labels?: string[];
+  breadcrumbs?: string[];
+  colorOptions?: string[];
+  couponText?: string;
+  rewardText?: string;
+  linkTo?: string;
+};
+
+export type MobileHomeConfig = {
+  layoutMode: MobileLayoutMode;
+  banners: MobileBannerItem[];
+  quickActions: MobileQuickActionItem[];
+  products: MobileProductItem[];
+};
+
+export type MobileUiState = {
+  homeConfig: MobileHomeConfig;
+  activeBannerIndex: number;
+};
+
 export type MobileStateSnapshot = {
   route: MobileRouteState;
   featureFlags: FeatureFlags;
   mockBehavior: MockBehavior;
+  ui?: MobileUiState;
   embedded: boolean;
   updatedAt: string;
 };
@@ -45,14 +98,18 @@ export type MobileEvent =
   | { type: "mobile:ready"; payload: { embedded: boolean; href: string } }
   | { type: "mobile:navigated"; payload: MobileRouteState }
   | { type: "mobile:feature-flags-updated"; payload: FeatureFlags }
-  | { type: "mobile:mock-behavior-updated"; payload: MockBehavior };
+  | { type: "mobile:mock-behavior-updated"; payload: MockBehavior }
+  | { type: "mobile:ui-config-updated"; payload: MobileUiState };
 
 export type AdminCommand =
   | { type: "admin:navigate"; payload: { path: string; query?: Record<string, string | boolean | number> } }
   | { type: "admin:set-feature-flag"; payload: { key: string; enabled: boolean } }
   | { type: "admin:set-feature-flags"; payload: FeatureFlags }
   | { type: "admin:set-mock-behavior"; payload: Partial<MockBehavior> }
-  | { type: "admin:request-state"; payload?: undefined };
+  | { type: "admin:request-state"; payload?: undefined }
+  | { type: "ui:set-layout-mode"; payload: { layoutMode: MobileLayoutMode } }
+  | { type: "ui:set-banners"; payload: { banners: MobileBannerItem[] } }
+  | { type: "ui:set-active-banner"; payload: { index: number } };
 
 export type BridgePayloadByKind = {
   event: MobileEvent;

@@ -10,10 +10,19 @@ const normalizeQuery = (query: Record<string, unknown>): Record<string, string> 
   );
 };
 
+const normalizeCommandQuery = (query?: Record<string, string | boolean | number>): Record<string, string> | undefined => {
+  if (!query) {
+    return undefined;
+  }
+
+  return Object.fromEntries(Object.entries(query).map(([key, value]) => [key, String(value)]));
+};
+
 export default defineNuxtPlugin(() => {
   const route = useRoute();
   const router = useRouter();
   const runtime = useMobileRuntime();
+  const uiConfig = useMobileUiConfig();
   const bridge = createBridgeChannel({ source: "mobile-web" });
 
   runtime.embedded.value = route.query.embedded === "true" || window.self !== window.top;
@@ -34,6 +43,7 @@ export default defineNuxtPlugin(() => {
         route: routeState(),
         featureFlags: runtime.featureFlags.value,
         mockBehavior: runtime.mockBehavior.value,
+        ui: uiConfig.uiState.value,
         embedded: runtime.embedded.value
       })
     );
@@ -58,7 +68,7 @@ export default defineNuxtPlugin(() => {
     logEvent({ type: "admin-command-received", payload: command });
 
     if (command.type === "admin:navigate") {
-      await router.push({ path: command.payload.path, query: command.payload.query });
+      await router.push({ path: command.payload.path, query: normalizeCommandQuery(command.payload.query) });
       sendState();
       return;
     }
@@ -75,6 +85,21 @@ export default defineNuxtPlugin(() => {
 
     if (command.type === "admin:set-mock-behavior") {
       applyMockBehavior(command.payload);
+      return;
+    }
+
+    if (command.type === "ui:set-layout-mode") {
+      uiConfig.setLayoutMode(command.payload.layoutMode);
+      return;
+    }
+
+    if (command.type === "ui:set-banners") {
+      uiConfig.setBanners(command.payload.banners);
+      return;
+    }
+
+    if (command.type === "ui:set-active-banner") {
+      uiConfig.setActiveBannerIndex(command.payload.index);
       return;
     }
 
@@ -106,6 +131,16 @@ export default defineNuxtPlugin(() => {
       logEvent({ type: "mobile-navigated", payload: routeState() });
       sendState();
     }
+  );
+
+  watch(
+    () => uiConfig.uiState.value,
+    (uiState) => {
+      bridge.sendToParent("event", { type: "mobile:ui-config-updated", payload: uiState });
+      logEvent({ type: "ui-config-updated", payload: { layoutMode: uiState.homeConfig.layoutMode, banners: uiState.homeConfig.banners.length } });
+      sendState();
+    },
+    { deep: true }
   );
 
   return {

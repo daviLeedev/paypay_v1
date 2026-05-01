@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-label="Orchid pot">
+  <rect width="420" height="320" rx="28" fill="#edf4ff"/>
+  <path d="M210 248 C198 176 204 112 246 56" fill="none" stroke="#517a5b" stroke-width="10" stroke-linecap="round"/>
+  <path d="M210 248 C220 172 196 116 150 76" fill="none" stroke="#517a5b" stroke-width="10" stroke-linecap="round"/>
+  <g fill="#ffffff" stroke="#d889c8" stroke-width="5">
+    <ellipse cx="252" cy="58" rx="30" ry="20" transform="rotate(-24 252 58)"/>
+    <ellipse cx="222" cy="72" rx="28" ry="18" transform="rotate(32 222 72)"/>
+    <ellipse cx="254" cy="92" rx="28" ry="18" transform="rotate(28 254 92)"/>
+    <circle cx="242" cy="78" r="13" fill="#f6d365" stroke="none"/>
+    <ellipse cx="146" cy="78" rx="28" ry="19" transform="rotate(24 146 78)"/>
+    <ellipse cx="176" cy="92" rx="28" ry="18" transform="rotate(-32 176 92)"/>
+    <ellipse cx="144" cy="112" rx="27" ry="17" transform="rotate(-28 144 112)"/>
+    <circle cx="158" cy="96" r="12" fill="#f6d365" stroke="none"/>
+  </g>
+  <ellipse cx="166" cy="202" rx="64" ry="20" fill="#7eb68a" transform="rotate(26 166 202)"/>
+  <ellipse cx="252" cy="202" rx="64" ry="20" fill="#7eb68a" transform="rotate(-28 252 202)"/>
+  <path d="M142 224 H278 L260 298 H160 Z" fill="#ffffff"/>
+  <path d="M154 242 H266" stroke="#c8d7e8" stroke-width="8" stroke-linecap="round"/>
+</svg>

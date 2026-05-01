@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-label="Spring mix detail">
+  <rect width="420" height="320" rx="28" fill="#f4fbf4"/>
+  <circle cx="126" cy="104" r="34" fill="#f6d365"/><circle cx="202" cy="82" r="38" fill="#f08aa7"/><circle cx="282" cy="122" r="34" fill="#b57edc"/>
+  <ellipse cx="166" cy="180" rx="70" ry="20" fill="#8fbe93" transform="rotate(28 166 180)"/>
+  <ellipse cx="252" cy="184" rx="74" ry="20" fill="#8fbe93" transform="rotate(-26 252 184)"/>
+  <path d="M126 242 H294 L270 300 H150 Z" fill="#ffffff"/>
+</svg>

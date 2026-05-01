@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Seasonal stems banner">
+  <rect width="960" height="540" fill="#f5efe6"/>
+  <path d="M0 380 C180 310 300 438 490 356 C690 270 782 184 960 220 L960 540 L0 540 Z" fill="#cde7d5"/>
+  <path d="M0 430 C230 360 360 500 590 414 C740 358 820 302 960 332 L960 540 L0 540 Z" fill="#f1c3cf"/>
+  <g transform="translate(150 88)">
+    <path d="M236 332 C210 250 220 160 292 64" fill="none" stroke="#3f6b4c" stroke-width="13" stroke-linecap="round"/>
+    <path d="M196 332 C176 246 146 166 84 94" fill="none" stroke="#3f6b4c" stroke-width="12" stroke-linecap="round"/>
+    <path d="M268 332 C286 250 342 174 416 118" fill="none" stroke="#3f6b4c" stroke-width="12" stroke-linecap="round"/>
+    <ellipse cx="294" cy="64" rx="34" ry="46" fill="#f08aa7" transform="rotate(24 294 64)"/>
+    <ellipse cx="80" cy="92" rx="30" ry="42" fill="#f6d365" transform="rotate(-32 80 92)"/>
+    <ellipse cx="418" cy="114" rx="32" ry="44" fill="#b57edc" transform="rotate(42 418 114)"/>
+    <ellipse cx="176" cy="188" rx="54" ry="18" fill="#7eb68a" transform="rotate(28 176 188)"/>
+    <ellipse cx="316" cy="194" rx="58" ry="18" fill="#7eb68a" transform="rotate(-30 316 194)"/>
+    <rect x="122" y="308" width="244" height="64" rx="28" fill="#ffffff"/>
+  </g>
+</svg>

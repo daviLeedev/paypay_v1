@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-label="Tulip basket wrap">
+  <rect width="420" height="320" rx="28" fill="#fff4d8"/>
+  <rect x="86" y="174" width="248" height="86" rx="26" fill="#b87a43"/>
+  <path d="M112 176 C132 92 160 74 188 122 M214 176 C212 88 246 66 276 116 M294 176 C304 110 334 100 352 138" fill="none" stroke="#5e8a5f" stroke-width="10" stroke-linecap="round"/>
+  <path d="M164 94 C174 46 224 54 226 102 C202 132 180 128 164 94 Z" fill="#f6c453"/>
+</svg>

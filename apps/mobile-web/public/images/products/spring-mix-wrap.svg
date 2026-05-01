@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-label="Spring mix wrap">
+  <rect width="420" height="320" rx="28" fill="#eef8ee"/>
+  <path d="M116 88 C152 50 196 54 210 104 C244 54 292 70 306 118" fill="none" stroke="#4f8159" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="116" cy="88" r="28" fill="#f6d365"/><circle cx="210" cy="104" r="30" fill="#f08aa7"/><circle cx="306" cy="118" r="28" fill="#b57edc"/>
+  <path d="M108 216 H312 L282 300 H138 Z" fill="#ffffff"/>
+</svg>

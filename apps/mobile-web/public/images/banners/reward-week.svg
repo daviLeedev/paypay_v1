@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Reward week banner">
+  <rect width="960" height="540" fill="#182332"/>
+  <path d="M0 420 C220 350 310 505 520 430 C710 365 780 235 960 290 L960 540 L0 540 Z" fill="#4fc0a8" opacity=".52"/>
+  <path d="M0 330 C210 250 340 400 530 310 C710 225 790 95 960 150 L960 540 L0 540 Z" fill="#f6d365" opacity=".72"/>
+  <rect x="126" y="118" width="220" height="220" rx="40" fill="#ffffff" opacity=".92"/>
+  <circle cx="236" cy="228" r="58" fill="#4fc0a8"/>
+  <path d="M236 150 L254 207 L314 207 L266 242 L284 300 L236 264 L188 300 L206 242 L158 207 L218 207 Z" fill="#182332"/>
+</svg>

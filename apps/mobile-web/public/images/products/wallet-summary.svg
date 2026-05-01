@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" role="img" aria-label="Wallet summary">
+  <rect width="420" height="320" rx="28" fill="#eaf0ff"/>
+  <rect x="72" y="86" width="276" height="160" rx="26" fill="#ffffff"/>
+  <rect x="102" y="124" width="96" height="18" rx="9" fill="#34506d"/>
+  <rect x="102" y="166" width="168" height="30" rx="15" fill="#16665d"/>
+  <circle cx="304" cy="166" r="32" fill="#8bd9c5"/>
+</svg>

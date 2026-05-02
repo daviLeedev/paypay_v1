@@ -11,7 +11,8 @@ body {
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -22,6 +23,11 @@ button {
   background: #ffffff;
   color: #182335;
   cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
 }
 
 .admin-shell {
@@ -76,7 +82,7 @@ h2 {
 
 .lab-layout {
   display: grid;
-  grid-template-columns: minmax(360px, 520px) minmax(300px, 1fr);
+  grid-template-columns: minmax(420px, 560px) minmax(300px, 1fr);
   gap: 24px;
   align-items: start;
 }
@@ -84,19 +90,117 @@ h2 {
 .device-stage {
   display: grid;
   place-items: center;
-  min-height: 720px;
+  min-height: 940px;
   border: 1px solid #d9e0e8;
   border-radius: 8px;
-  background: #e9eef4;
+  padding: 30px;
+  background: #eef2f6;
+}
+
+.phone-frame {
+  position: relative;
+  width: min(430px, 100%);
+  aspect-ratio: 430 / 884;
+  border: 5px solid #050505;
+  border-radius: 58px;
+  padding: 10px;
+  background:
+    linear-gradient(140deg, #3a3a3a 0%, #050505 30%, #161616 72%, #4a4a4a 100%);
+  box-shadow:
+    0 34px 80px rgb(22 28 36 / 22%),
+    inset 0 0 0 1px rgb(255 255 255 / 14%),
+    inset 0 0 0 4px #111111;
+}
+
+.phone-frame::after {
+  pointer-events: none;
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 52px;
+  content: "";
+}
+
+.phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 48px;
+  background: #ffffff;
+}
+
+.phone-island {
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 118px;
+  height: 34px;
+  border-radius: 999px;
+  padding-right: 15px;
+  background: #000000;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 32%);
+  transform: translateX(-50%);
+}
+
+.phone-island__camera {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #111827;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 62% 38%, #74a7ff 0 12%, transparent 13%),
+    radial-gradient(circle, #0c3970 0 36%, #020712 37% 100%);
+}
+
+.phone-button {
+  position: absolute;
+  z-index: 0;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2a2a2a, #060606);
+  box-shadow: inset 1px 0 0 rgb(255 255 255 / 16%);
+}
+
+.phone-button--mute {
+  top: 132px;
+  left: -8px;
+  height: 42px;
+}
+
+.phone-button--volume-up,
+.phone-button--volume-down {
+  left: -9px;
+  height: 72px;
+}
+
+.phone-button--volume-up {
+  top: 220px;
+}
+
+.phone-button--volume-down {
+  top: 318px;
+}
+
+.phone-button--power {
+  top: 220px;
+  right: -9px;
+  height: 98px;
 }
 
 .mobile-frame {
-  width: 390px;
-  height: 680px;
-  border: 1px solid #26313f;
-  border-radius: 28px;
+  position: absolute;
+  inset: 54px 0 0;
+  width: 100%;
+  height: calc(100% - 54px);
+  border: 0;
+  border-radius: 0;
   background: #ffffff;
-  box-shadow: 0 24px 70px rgb(38 49 63 / 18%);
+  box-shadow: none;
 }
 
 .control-panel,
@@ -109,6 +213,8 @@ h2 {
 .control-panel {
   display: grid;
   gap: 22px;
+  max-height: 940px;
+  overflow: auto;
   padding: 20px;
 }
 
@@ -156,8 +262,48 @@ h2 {
   align-items: start;
 }
 
-.field-row--stacked input {
+.field-row--stacked input,
+.field-row--stacked select {
   width: 100%;
+}
+
+.field-row--stacked select {
+  min-height: 38px;
+  border: 1px solid #cdd5df;
+  border-radius: 8px;
+  padding: 8px;
+  background: #ffffff;
+}
+
+.manager-list {
+  display: grid;
+  gap: 10px;
+}
+
+.manager-card {
+  display: grid;
+  gap: 10px;
+  border: 1px solid #e1e6ee;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfcfe;
+}
+
+.manager-card > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.manager-card > header strong {
+  font-size: 13px;
+}
+
+.manager-card > header button {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 12px;
 }
 
 .data-grid {
@@ -224,7 +370,7 @@ li span {
     padding: 18px;
   }
 
-  .mobile-frame {
-    width: min(390px, 100%);
+  .phone-frame {
+    width: min(430px, calc(100vw - 72px));
   }
 }

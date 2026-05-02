@@ -1,5 +1,5 @@
 import { DEFAULT_MOBILE_HOME_CONFIG } from "@repo/config";
-import type { MobileBannerItem, MobileHomeConfig, MobileLayoutMode, MobileUiState } from "@repo/types";
+import type { MobileBannerItem, MobileHomeConfig, MobileLayoutMode, MobileProductItem, MobileUiState } from "@repo/types";
 
 const cloneHomeConfig = (config: MobileHomeConfig): MobileHomeConfig => JSON.parse(JSON.stringify(config)) as MobileHomeConfig;
 
@@ -35,6 +35,13 @@ export const useMobileUiConfig = () => {
     activeBannerIndex.value = clampIndex(activeBannerIndex.value, banners.length);
   };
 
+  const setProducts = (products: MobileProductItem[]) => {
+    homeConfig.value = {
+      ...homeConfig.value,
+      products: products.map((product) => ({ ...product }))
+    };
+  };
+
   const setActiveBannerIndex = (index: number) => {
     activeBannerIndex.value = clampIndex(index, homeConfig.value.banners.length);
   };
@@ -50,6 +57,7 @@ export const useMobileUiConfig = () => {
     uiState,
     setLayoutMode,
     setBanners,
+    setProducts,
     setActiveBannerIndex,
     resetHomeConfig
   };

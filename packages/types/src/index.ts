@@ -109,6 +109,7 @@ export type AdminCommand =
   | { type: "admin:request-state"; payload?: undefined }
   | { type: "ui:set-layout-mode"; payload: { layoutMode: MobileLayoutMode } }
   | { type: "ui:set-banners"; payload: { banners: MobileBannerItem[] } }
+  | { type: "ui:set-products"; payload: { products: MobileProductItem[] } }
   | { type: "ui:set-active-banner"; payload: { index: number } };
 
 export type BridgePayloadByKind = {

@@ -1,9 +1,15 @@
 const filePath = (path: string) => new URL(path, import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
+const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env ?? {};
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-03-01",
   devtools: { enabled: false },
   modules: ["@pinia/nuxt"],
+  runtimeConfig: {
+    public: {
+      rootServer: env.ROOT_SERVER ?? ""
+    }
+  },
   typescript: {
     strict: true
   },

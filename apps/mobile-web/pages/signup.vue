@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
+import { ApiRequestError, USER_API } from "~/api";
 import { useModalStore } from "~/stores/modalStore";
 import { useUserStore } from "~/stores/userStore";
 
@@ -7,10 +8,13 @@ const route = useRoute();
 const userStore = useUserStore();
 const modalStore = useModalStore();
 
+const passwordSpecialCharacters = "@$!%*#?&";
+const passwordSpecialPattern = /[@$!%*#?&]/;
+
 const domainOptions = [
-  { label: "구글", value: "gmail.com" },
-  { label: "네이버", value: "naver.com" },
-  { label: "다음", value: "daum.net" },
+  { label: "gmail.com", value: "gmail.com" },
+  { label: "naver.com", value: "naver.com" },
+  { label: "daum.net", value: "daum.net" },
   { label: "직접입력", value: "custom" }
 ];
 
@@ -25,69 +29,143 @@ const form = reactive({
 });
 
 const submitted = ref(false);
+const isSubmitting = ref(false);
+const formErrors = reactive<Record<string, string>>({});
+
 const redirectTo = computed(() => String(route.query.redirect ?? "/"));
 const selectedDomain = computed(() => form.emailDomain === "custom" ? form.customEmailDomain.trim() : form.emailDomain);
 const email = computed(() => `${form.emailId.trim()}@${selectedDomain.value}`);
+const hasError = computed(() => Object.keys(formErrors).length > 0);
 
-const errors = computed(() => {
-  const nextErrors: Record<string, string> = {};
+const resetErrors = () => {
+  Object.keys(formErrors).forEach((key) => {
+    delete formErrors[key];
+  });
+};
+
+const checkEmailDuplicate = async (targetEmail: string) => {
+  // TODO: 회원 API가 준비되면 이 함수 안에서 이메일 중복 확인 API로 교체합니다.
+  const reservedEmails = ["test@yumishop.test", "demo@yumishop.test"];
+  await Promise.resolve();
+  return reservedEmails.includes(targetEmail.toLowerCase());
+};
+
+const getPasswordError = (password: string) => {
+  if (!password) {
+    return "비밀번호를 입력해주세요.";
+  }
+
+  const missingRules: string[] = [];
+
+  if (password.length < 8) {
+    missingRules.push("최소 8자");
+  }
+
+  if (!/[A-Za-z]/.test(password)) {
+    missingRules.push("영문");
+  }
+
+  if (!/\d/.test(password)) {
+    missingRules.push("숫자");
+  }
+
+  if (!passwordSpecialPattern.test(password)) {
+    missingRules.push(`특수문자(${passwordSpecialCharacters})`);
+  }
+
+  return missingRules.length ? `부족한 조건: ${missingRules.join(", ")}.` : "";
+};
+
+const validateSignupForm = async () => {
+  resetErrors();
 
   if (!form.name.trim()) {
-    nextErrors.name = "이름을 입력해주세요.";
+    formErrors.name = "이름을 입력해주세요.";
   }
 
   if (!form.emailId.trim()) {
-    nextErrors.emailId = "이메일 아이디를 입력해주세요.";
+    formErrors.emailId = "이메일 아이디를 입력해주세요.";
   } else if (!/^[^\s@]+$/.test(form.emailId.trim())) {
-    nextErrors.emailId = "@ 앞부분만 입력해주세요.";
+    formErrors.emailId = "@ 앞부분만 입력해주세요.";
   }
 
   if (!selectedDomain.value) {
-    nextErrors.emailDomain = "이메일 도메인을 선택하거나 입력해주세요.";
+    formErrors.emailDomain = "이메일 도메인을 선택하거나 입력해주세요.";
   } else if (!/^[^\s@]+\.[^\s@]+$/.test(selectedDomain.value)) {
-    nextErrors.emailDomain = "올바른 도메인을 입력해주세요.";
+    formErrors.emailDomain = "올바른 이메일 도메인을 입력해주세요.";
   }
 
-  if (form.password.length < 8) {
-    nextErrors.password = "비밀번호는 8자 이상 입력해주세요.";
+  const passwordError = getPasswordError(form.password);
+  if (passwordError) {
+    formErrors.password = passwordError;
   }
 
   if (!form.passwordConfirm) {
-    nextErrors.passwordConfirm = "비밀번호 확인을 입력해주세요.";
+    formErrors.passwordConfirm = "비밀번호 확인을 입력해주세요.";
   } else if (form.password !== form.passwordConfirm) {
-    nextErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
+    formErrors.passwordConfirm = "입력된 비밀번호가 다릅니다.";
   }
 
   if (!form.address.trim()) {
-    nextErrors.address = "주소지를 입력해주세요.";
+    formErrors.address = "주소지를 입력해주세요.";
   }
 
-  return nextErrors;
-});
+  if (!hasError.value && await checkEmailDuplicate(email.value)) {
+    formErrors.emailId = "이미 사용 중인 이메일입니다.";
+  }
 
-const hasError = computed(() => Object.keys(errors.value).length > 0);
+  return !hasError.value;
+};
+
+const getErrorMessage = (error: unknown) => {
+  if (error instanceof ApiRequestError) {
+    return error.message;
+  }
+
+  return "회원가입 중 오류가 발생했습니다.";
+};
 
 const signup = async () => {
   submitted.value = true;
+  isSubmitting.value = true;
 
-  if (hasError.value) {
-    return;
+  try {
+    const isValid = await validateSignupForm();
+
+    if (!isValid) {
+      return;
+    }
+
+    const createdUser = await USER_API.signup({
+      email: email.value,
+      name: form.name.trim(),
+      password: form.password
+    });
+
+    userStore.register({
+      id: createdUser.userId ?? createdUser.id ?? `user-${Date.now()}`,
+      name: createdUser.name ?? form.name.trim(),
+      email: createdUser.email ?? email.value,
+      address: form.address.trim(),
+      membershipGrade: createdUser.membershipGrade ?? (createdUser.role === "USER" ? "일반회원" : createdUser.role ?? "일반회원")
+    });
+
+    modalStore.show({
+      type: "success",
+      title: "회원가입 완료",
+      message: `${form.name.trim()}님 환영합니다.`,
+      actions: [{ label: "로그인하기", behavior: "route", to: `/login?redirect=${encodeURIComponent(redirectTo.value)}`, variant: "primary" }]
+    });
+  } catch (error) {
+    modalStore.show({
+      type: "warning",
+      title: "회원가입 실패",
+      message: getErrorMessage(error),
+      actions: [{ label: "확인", behavior: "close", variant: "primary" }]
+    });
+  } finally {
+    isSubmitting.value = false;
   }
-
-  userStore.register({
-    id: `user-${Date.now()}`,
-    name: form.name.trim(),
-    email: email.value,
-    address: form.address.trim(),
-    membershipGrade: "일반회원"
-  });
-
-  modalStore.show({
-    type: "success",
-    title: "회원가입 완료",
-    message: `${form.name.trim()}님, 환영합니다.`,
-    actions: [{ label: "쇼핑 계속하기", behavior: "route", to: redirectTo.value, variant: "primary" }]
-  });
 };
 </script>
 
@@ -99,7 +177,7 @@ const signup = async () => {
       <label>
         <span>이름</span>
         <input v-model="form.name" type="text" autocomplete="name" />
-        <em v-if="submitted && errors.name" class="mw-form-error">{{ errors.name }}</em>
+        <em v-if="submitted && formErrors.name" class="mw-form-error">{{ formErrors.name }}</em>
       </label>
 
       <label>
@@ -121,30 +199,32 @@ const signup = async () => {
           placeholder="example.com"
           aria-label="직접 입력 도메인"
         />
-        <em v-if="submitted && (errors.emailId || errors.emailDomain)" class="mw-form-error">
-          {{ errors.emailId || errors.emailDomain }}
+        <em v-if="submitted && (formErrors.emailId || formErrors.emailDomain)" class="mw-form-error">
+          {{ formErrors.emailId || formErrors.emailDomain }}
         </em>
       </label>
 
       <label>
         <span>비밀번호</span>
         <input v-model="form.password" type="password" autocomplete="new-password" />
-        <em v-if="submitted && errors.password" class="mw-form-error">{{ errors.password }}</em>
+        <em v-if="submitted && formErrors.password" class="mw-form-error">{{ formErrors.password }}</em>
       </label>
 
       <label>
         <span>비밀번호 확인</span>
         <input v-model="form.passwordConfirm" type="password" autocomplete="new-password" />
-        <em v-if="submitted && errors.passwordConfirm" class="mw-form-error">{{ errors.passwordConfirm }}</em>
+        <em v-if="submitted && formErrors.passwordConfirm" class="mw-form-error">{{ formErrors.passwordConfirm }}</em>
       </label>
 
       <label>
         <span>주소지</span>
         <input v-model="form.address" type="text" autocomplete="street-address" />
-        <em v-if="submitted && errors.address" class="mw-form-error">{{ errors.address }}</em>
+        <em v-if="submitted && formErrors.address" class="mw-form-error">{{ formErrors.address }}</em>
       </label>
 
-      <button type="submit">회원가입하기</button>
+      <button type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? "확인 중..." : "회원가입하기" }}
+      </button>
     </form>
   </section>
 </template>

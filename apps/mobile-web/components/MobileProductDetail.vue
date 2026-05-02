@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { logEvent } from "@repo/logger";
 import type { MobileProductItem } from "@repo/types";
-import { computed, ref, watch } from "vue";
+import useEmblaCarousel from "embla-carousel-vue";
+import { computed, nextTick, ref, watch } from "vue";
 import { useModalStore } from "~/stores/modalStore";
 import { useUserStore } from "~/stores/userStore";
 
@@ -12,6 +13,12 @@ const props = defineProps<{
 const userStore = useUserStore();
 const modalStore = useModalStore();
 const activeImageIndex = ref(0);
+const failedImages = ref<Record<string, boolean>>({});
+const [galleryRef, galleryApi] = useEmblaCarousel({
+  align: "start",
+  loop: false,
+  duration: 28
+});
 
 const images = computed(() => {
   const productImages = props.product.images?.length ? props.product.images : [];
@@ -19,9 +26,14 @@ const images = computed(() => {
   return productImages.length ? productImages : fallbackImages;
 });
 
-const activeImage = computed(() => images.value[activeImageIndex.value] ?? images.value[0]);
-const breadcrumbs = computed(() => props.product.breadcrumbs?.length ? props.product.breadcrumbs : ["꽃", props.product.title]);
+const breadcrumbs = computed(() => {
+  return props.product.breadcrumbs?.length ? props.product.breadcrumbs : ["꽃", props.product.title];
+});
 const labels = computed(() => props.product.labels ?? [props.product.badge].filter(Boolean));
+
+const syncSelectedImage = (api: { selectedScrollSnap: () => number }) => {
+  activeImageIndex.value = api.selectedScrollSnap();
+};
 
 const setActiveImage = (index: number) => {
   if (!images.value.length) {
@@ -29,7 +41,9 @@ const setActiveImage = (index: number) => {
     return;
   }
 
-  activeImageIndex.value = (index + images.value.length) % images.value.length;
+  const nextIndex = (index + images.value.length) % images.value.length;
+  activeImageIndex.value = nextIndex;
+  galleryApi.value?.scrollTo(nextIndex);
 };
 
 const buyNow = () => {
@@ -57,9 +71,39 @@ const buyNow = () => {
 };
 
 watch(
+  galleryApi,
+  (api) => {
+    if (!api) {
+      return;
+    }
+
+    api.on("select", syncSelectedImage);
+    api.on("reInit", syncSelectedImage);
+    api.scrollTo(activeImageIndex.value);
+  },
+  { immediate: true }
+);
+
+watch(
+  () => images.value.length,
+  async (length) => {
+    await nextTick();
+    galleryApi.value?.reInit();
+
+    if (!length || activeImageIndex.value >= length) {
+      setActiveImage(0);
+    }
+  }
+);
+
+watch(
   () => props.product.id,
-  () => {
+  async () => {
     activeImageIndex.value = 0;
+    failedImages.value = {};
+    await nextTick();
+    galleryApi.value?.reInit();
+    galleryApi.value?.scrollTo(0);
   }
 );
 </script>
@@ -72,24 +116,39 @@ watch(
     </nav>
 
     <section class="mw-product-gallery" aria-label="상품 이미지">
-      <div class="mw-product-gallery__viewport">
-        <img v-if="activeImage" :src="activeImage" :alt="product.title" />
-        <div v-else class="mw-product-card__fallback" aria-hidden="true" />
+      <div ref="galleryRef" class="mw-product-gallery__viewport">
+        <div class="mw-product-gallery__container">
+          <div
+            v-for="(image, index) in images"
+            :key="`${image}-${index}`"
+            class="mw-product-gallery__slide"
+          >
+            <img
+              v-if="image && !failedImages[image]"
+              :src="image"
+              :alt="`${product.title} 이미지 ${index + 1}`"
+              draggable="false"
+              @error="failedImages[image] = true"
+            />
+            <div v-else class="mw-product-card__fallback" aria-hidden="true" />
+          </div>
+
+          <div v-if="!images.length" class="mw-product-gallery__slide">
+            <div class="mw-product-card__fallback" aria-hidden="true" />
+          </div>
+        </div>
       </div>
 
-      <div v-if="images.length > 1" class="mw-product-gallery__controls">
-        <button type="button" aria-label="이전 상품 이미지" @click="setActiveImage(activeImageIndex - 1)">‹</button>
-        <div class="mw-product-gallery__indicators">
-          <button
-            v-for="(image, index) in images"
-            :key="image"
-            type="button"
-            :aria-label="`${index + 1}번째 상품 이미지 보기`"
-            :class="{ 'is-active': index === activeImageIndex }"
-            @click="setActiveImage(index)"
-          />
-        </div>
-        <button type="button" aria-label="다음 상품 이미지" @click="setActiveImage(activeImageIndex + 1)">›</button>
+      <div v-if="images.length > 1" class="mw-product-gallery__indicators" aria-label="상품 이미지 슬라이드 선택">
+        <button
+          v-for="(image, index) in images"
+          :key="`${image}-indicator-${index}`"
+          type="button"
+          :aria-label="`${index + 1}번째 상품 이미지 보기`"
+          :aria-current="index === activeImageIndex ? 'true' : undefined"
+          :class="{ 'is-active': index === activeImageIndex }"
+          @click="setActiveImage(index)"
+        />
       </div>
     </section>
 
@@ -126,11 +185,6 @@ watch(
         <span>{{ product.couponText ?? "첫 구매 쿠폰 받으러 가기" }}</span>
         <strong>›</strong>
       </NuxtLink>
-
-      <!-- <button class="mw-product-detail__reward" type="button">
-        <strong>{{ product.rewardText ?? "2,500원 최대 적립" }}</strong>
-        <span>⌄</span>
-      </button> -->
 
       <button class="mw-product-detail__buy" type="button" @click="buyNow">구매하기</button>
     </section>

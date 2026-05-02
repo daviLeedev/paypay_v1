@@ -98,6 +98,11 @@ export default defineNuxtPlugin(() => {
       return;
     }
 
+    if (command.type === "ui:set-products") {
+      uiConfig.setProducts(command.payload.products);
+      return;
+    }
+
     if (command.type === "ui:set-active-banner") {
       uiConfig.setActiveBannerIndex(command.payload.index);
       return;
@@ -137,7 +142,14 @@ export default defineNuxtPlugin(() => {
     () => uiConfig.uiState.value,
     (uiState) => {
       bridge.sendToParent("event", { type: "mobile:ui-config-updated", payload: uiState });
-      logEvent({ type: "ui-config-updated", payload: { layoutMode: uiState.homeConfig.layoutMode, banners: uiState.homeConfig.banners.length } });
+      logEvent({
+        type: "ui-config-updated",
+        payload: {
+          layoutMode: uiState.homeConfig.layoutMode,
+          banners: uiState.homeConfig.banners.length,
+          products: uiState.homeConfig.products.length
+        }
+      });
       sendState();
     },
     { deep: true }

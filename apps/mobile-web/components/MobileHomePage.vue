@@ -7,6 +7,8 @@ const { homeConfig, activeBannerIndex, setActiveBannerIndex, setLayoutMode } = u
     <MobileHeroBanner
       :items="homeConfig.banners"
       :active-index="activeBannerIndex"
+      autoplay
+      :interval-ms="3000"
       @update:active-index="setActiveBannerIndex"
     />
     <MobileQuickActions :items="homeConfig.quickActions" />

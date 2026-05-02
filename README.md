@@ -29,6 +29,7 @@ Nuxt 3 기반 monorepo frontend platform입니다.
 
 | Version | Date | Commit | Summary |
 | --- | --- | --- | --- |
+| `0.1.5` | 2026-05-03 | pending | mobile auth api and storefront controls added |
 | `0.1.4` | 2026-05-02 | 2f0dc73 | admin mobile lab controls added |
 | `0.1.3` | 2026-05-02 | ebf7e19 | version history hooks added |
 | `0.1.2` | 2026-05-02 | 32bd501 | project workflow policies added |

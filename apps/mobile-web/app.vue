@@ -4,6 +4,6 @@ const { embedded } = useMobileRuntime();
 
 <template>
   <MobileAppShell :embedded="embedded">
-    <NuxtPage />
+    <NuxtPage :transition="{ name: 'mw-page-transition', mode: 'out-in' }" />
   </MobileAppShell>
 </template>

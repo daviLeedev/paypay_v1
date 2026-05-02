@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { logEvent } from "@repo/logger";
+import { computed, onBeforeUnmount, watch } from "vue";
 import { useUserStore } from "~/stores/userStore";
 
 const props = defineProps<{
@@ -17,6 +18,7 @@ const { theme, applyTheme } = useMobileTheme();
 const drawerUserName = computed(() => userStore.user ? `${userStore.user.name}님` : "로그인해주세요");
 const drawerUserGrade = computed(() => userStore.user?.membershipGrade ?? (userStore.isLoggedIn ? "일반회원" : "게스트"));
 const loginTo = computed(() => ({ path: "/login", query: route.query }));
+const mypageTo = computed(() => ({ path: "/mypage", query: route.query }));
 
 const navItems = [
   { label: "꽃", to: "/" },
@@ -69,6 +71,16 @@ onBeforeUnmount(() => {
             <span class="mw-icon mw-icon--close" aria-hidden="true" />
           </button>
         </header>
+
+        <NuxtLink
+          v-if="userStore.isLoggedIn"
+          class="mw-drawer__mypage-button"
+          :to="mypageTo"
+          @click="closeDrawer"
+        >
+          <span>마이페이지</span>
+          <span class="mw-drawer__login-arrow" aria-hidden="true" />
+        </NuxtLink>
 
         <section class="mw-drawer__section mw-drawer__section--theme" aria-label="테마 설정">
           <h3>테마</h3>

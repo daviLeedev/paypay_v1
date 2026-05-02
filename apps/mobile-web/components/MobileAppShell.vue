@@ -2,6 +2,8 @@
 defineProps<{
   embedded: boolean;
 }>();
+
+const showFooter = false;
 </script>
 
 <template>
@@ -10,7 +12,7 @@ defineProps<{
     <main class="mw-page">
       <slot />
     </main>
-    <MobileBottomNavigation />
+    <MobileBottomNavigation v-if="showFooter" />
     <MobileAlertModal />
   </div>
 </template>

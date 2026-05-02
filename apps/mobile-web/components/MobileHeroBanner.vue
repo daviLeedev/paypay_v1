@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import Autoplay from "embla-carousel-autoplay";
+import useEmblaCarousel from "embla-carousel-vue";
 import type { MobileBannerItem } from "@repo/types";
+
+type EmblaApiLike = {
+  selectedScrollSnap(): number;
+};
 
 const props = withDefaults(
   defineProps<{
@@ -10,7 +16,7 @@ const props = withDefaults(
   }>(),
   {
     autoplay: false,
-    intervalMs: 5000
+    intervalMs: 3000
   }
 );
 
@@ -19,6 +25,8 @@ const emit = defineEmits<{
 }>();
 
 const failedImages = ref<Record<string, boolean>>({});
+const plugins = computed(() => props.autoplay ? [Autoplay({ delay: props.intervalMs, stopOnInteraction: false, stopOnMouseEnter: true })] : []);
+const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start", duration: 28 }, plugins);
 
 const activeItem = computed(() => props.items[props.activeIndex] ?? props.items[0]);
 const hasMultiple = computed(() => props.items.length > 1);
@@ -29,31 +37,43 @@ const setActive = (index: number) => {
     return;
   }
 
-  emit("update:activeIndex", (index + props.items.length) % props.items.length);
+  const nextIndex = (index + props.items.length) % props.items.length;
+  emit("update:activeIndex", nextIndex);
+  emblaApi.value?.scrollTo(nextIndex);
 };
 
-let timer: ReturnType<typeof window.setInterval> | undefined;
-
-const clearAutoplay = () => {
-  if (timer) {
-    window.clearInterval(timer);
-    timer = undefined;
-  }
+const syncSelected = (api: EmblaApiLike) => {
+  emit("update:activeIndex", api.selectedScrollSnap());
 };
 
-onMounted(() => {
-  if (!props.autoplay || !hasMultiple.value) {
-    return;
+watch(
+  emblaApi,
+  (api) => {
+    if (!api) {
+      return;
+    }
+
+    api.on("select", syncSelected);
+    api.plugins().autoplay?.play();
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.activeIndex,
+  (index) => {
+    if (emblaApi.value && index !== emblaApi.value.selectedScrollSnap()) {
+      emblaApi.value.scrollTo(index);
+    }
   }
-
-  timer = window.setInterval(() => setActive(props.activeIndex + 1), props.intervalMs);
-});
-
-onBeforeUnmount(clearAutoplay);
+);
 
 watch(
   () => props.items.length,
-  (length) => {
+  async (length) => {
+    await nextTick();
+    emblaApi.value?.reInit();
+
     if (props.activeIndex >= length) {
       setActive(0);
     }
@@ -63,32 +83,36 @@ watch(
 
 <template>
   <section class="mw-hero-banner" :class="activeItem ? `mw-hero-banner--${activeItem.tone ?? 'default'}` : undefined">
-    <div v-if="activeItem" class="mw-hero-banner__viewport">
-      <NuxtLink class="mw-hero-banner__slide" :to="activeItem.linkTo ?? '/'">
-        <img
-          v-if="activeItem.imageUrl && !failedImages[activeItem.id]"
-          class="mw-hero-banner__image"
-          :src="activeItem.imageUrl"
-          :alt="activeItem.title"
-          @error="failedImages[activeItem.id] = true"
-        />
-        <div v-else class="mw-hero-banner__fallback" aria-hidden="true" />
-      </NuxtLink>
+    <div v-if="items.length" ref="emblaRef" class="mw-hero-banner__viewport">
+      <div class="mw-hero-banner__container">
+        <NuxtLink
+          v-for="item in items"
+          :key="item.id"
+          class="mw-hero-banner__slide"
+          :to="item.linkTo ?? '/'"
+        >
+          <img
+            v-if="item.imageUrl && !failedImages[item.id]"
+            class="mw-hero-banner__image"
+            :src="item.imageUrl"
+            :alt="item.title"
+            draggable="false"
+            @error="failedImages[item.id] = true"
+          />
+          <div v-else class="mw-hero-banner__fallback" aria-hidden="true" />
+        </NuxtLink>
+      </div>
     </div>
 
-    <div v-if="hasMultiple" class="mw-hero-banner__controls" aria-label="Banner controls">
-      <button type="button" aria-label="Previous banner" @click="setActive(activeIndex - 1)">‹</button>
-      <div class="mw-hero-banner__indicators">
-        <button
-          v-for="(item, index) in items"
-          :key="item.id"
-          type="button"
-          :aria-label="`Show ${item.title}`"
-          :class="{ 'is-active': index === activeIndex }"
-          @click="setActive(index)"
-        />
-      </div>
-      <button type="button" aria-label="Next banner" @click="setActive(activeIndex + 1)">›</button>
+    <div v-if="hasMultiple" class="mw-hero-banner__indicators" aria-label="Banner controls">
+      <button
+        v-for="(item, index) in items"
+        :key="item.id"
+        type="button"
+        :aria-label="`Show ${item.title}`"
+        :class="{ 'is-active': index === activeIndex }"
+        @click="setActive(index)"
+      />
     </div>
   </section>
 </template>
